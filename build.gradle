@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://bbprepo.blackboard.com/content/repositories/releases/"
+    }
+}
+
+dependencies {
+    //tiestCompile "junit:junit:4.11"
+
+    compile 'blackboard.platform:bb-platform:9.1.100401.0'
+    compile 'net.sourceforge.stripes:stripes:1.5.7'
+    compile 'org.apache.tomcat:tomcat-servlet-api:7.0.53'
+}
+

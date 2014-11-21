@@ -19,8 +19,8 @@ import java.util.ResourceBundle;
  */
 public class BbLocalizationBundleFactory implements LocalizationBundleFactory {
 
-    public static final String VENDOR_INIT_PARAM = "blackboard.plugin.vendor";
-    public static final String PLUGIN_HANDLE_INIT_PARAM = "blackboard.plugin.handle";
+    public static final String VENDOR_CONTEXT_PARAM = "blackboard.plugin.vendor";
+    public static final String PLUGIN_HANDLE_CONTEXT_PARAM = "blackboard.plugin.handle";
 
     private Id pluginId;
 
@@ -41,8 +41,8 @@ public class BbLocalizationBundleFactory implements LocalizationBundleFactory {
 
     @Override
     public void init(Configuration configuration) throws Exception {
-        String vendorId = configuration.getBootstrapPropertyResolver().getProperty(VENDOR_INIT_PARAM);
-        String handle = configuration.getBootstrapPropertyResolver().getProperty(PLUGIN_HANDLE_INIT_PARAM);
+        String vendorId = configuration.getBootstrapPropertyResolver().getProperty(VENDOR_CONTEXT_PARAM);
+        String handle = configuration.getBootstrapPropertyResolver().getProperty(PLUGIN_HANDLE_CONTEXT_PARAM);
 
         PlugInManager pluginMgr = PlugInManagerFactory.getInstance();
         pluginId = pluginMgr.getPlugIn(vendorId, handle).getId();

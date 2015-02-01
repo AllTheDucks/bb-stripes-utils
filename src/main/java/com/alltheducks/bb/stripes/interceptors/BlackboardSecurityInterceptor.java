@@ -10,8 +10,6 @@ import blackboard.platform.security.SecurityUtil;
 import blackboard.platform.session.BbSession;
 import blackboard.platform.session.BbSessionManagerServiceFactory;
 import java.lang.reflect.Method;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
@@ -19,6 +17,8 @@ import net.sourceforge.stripes.controller.ExecutionContext;
 import net.sourceforge.stripes.controller.Interceptor;
 import net.sourceforge.stripes.controller.Intercepts;
 import net.sourceforge.stripes.controller.LifecycleStage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -31,13 +31,17 @@ import net.sourceforge.stripes.controller.LifecycleStage;
 @Intercepts({LifecycleStage.ActionBeanResolution, LifecycleStage.HandlerResolution})
 public class BlackboardSecurityInterceptor implements Interceptor {
 
+    Logger logger = LoggerFactory.getLogger(BlackboardSecurityInterceptor.class);
+
     @Override
     public Resolution intercept(ExecutionContext ctx) throws Exception {
-        Logger logger = Logger.getLogger(BlackboardSecurityInterceptor.class.getName());
-        logger.log(Level.FINE, "running the security interceptor for URL: {0} in lifecycle stage: {1}  And ActionBean: {2}", new Object[]{ctx.getActionBeanContext().getRequest().getRequestURI(), ctx.getLifecycleStage().name(), ctx.getActionBean() != null ? ctx.getActionBean().getClass().getName() : ""});
+        logger.debug("Running the security interceptor for URL: {} in lifecycle stage: {}  And ActionBean: {}",
+                ctx.getActionBeanContext().getRequest().getRequestURI(),
+                ctx.getLifecycleStage().name(),
+                ctx.getActionBean() != null ? ctx.getActionBean().getClass().getName() : "");
 
-        Resolution resolution = ctx.proceed();
-        ActionBean action = ctx.getActionBean();
+        final Resolution resolution = ctx.proceed();
+        final ActionBean action = ctx.getActionBean();
 
         LoginRequired loginRequired = action.getClass().getAnnotation(LoginRequired.class);
         if (loginRequired != null) {
@@ -84,7 +88,7 @@ public class BlackboardSecurityInterceptor implements Interceptor {
         User user = bbContext.getUser();
         for (String entitlment : allEntitlements) {
             if (!SecurityUtil.userHasEntitlement(new Entitlement(entitlment))) {
-                logger.log(Level.FINE, "Current User: {0} Doesn''t have entitlement: {1}", new Object[]{user.getUserName(), entitlment});
+                logger.warn("Current User: {} Doesn't have entitlement: {}", user.getUserName(), entitlment);
                 return new RedirectResolution(errorPageUrl);
             }
         }

@@ -13,12 +13,13 @@ import java.lang.annotation.Target;
  * Users must have <b>ALL</b> the specified entitlements to be allowed access to the resource.
  * These entitlements are enforced by the {@link BlackboardSecurityInterceptor}
  * Stripes interceptor.<br>
- * e.g. @EntitlementRestrictions(entitlements = {"course.content.CREATE", "course.content.MODIFY"}, errorPage = "/error/noaccess.jsp")
+ * e.g. @EntitlementRestrictions(entitlements = {"course.content.CREATE", "course.content.MODIFY"}, errorPage = "/error/noaccess.jsp")<br>
+ *
  * @see BlackboardSecurityInterceptor
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface EntitlementRestrictions {
     String[] entitlements();
-    String errorPage();
+    String errorPage() default "";
 }

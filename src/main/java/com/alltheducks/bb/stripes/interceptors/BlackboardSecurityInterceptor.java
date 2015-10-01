@@ -1,5 +1,6 @@
 package com.alltheducks.bb.stripes.interceptors;
 
+import com.alltheducks.bb.stripes.exceptions.EntitlementException;
 import com.alltheducks.bb.stripes.EntitlementRestrictions;
 import com.alltheducks.bb.stripes.LoginRequired;
 import blackboard.data.user.User;
@@ -89,7 +90,13 @@ public class BlackboardSecurityInterceptor implements Interceptor {
         for (String entitlment : allEntitlements) {
             if (!SecurityUtil.userHasEntitlement(new Entitlement(entitlment))) {
                 logger.warn("Current User: {} Doesn't have entitlement: {}", user.getUserName(), entitlment);
-                return new RedirectResolution(errorPageUrl);
+                if (errorPageUrl != null && !errorPageUrl.trim().isEmpty()) {
+                    return new RedirectResolution(errorPageUrl);
+                } else {
+                    throw new EntitlementException(
+                            String.format("Current User: %s Doesn't have entitlement: %s",
+                            (user == null ? "null" : user.getUserName()), entitlment));
+                }
             }
         }
         return resolution;
